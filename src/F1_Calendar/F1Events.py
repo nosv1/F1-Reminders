@@ -30,6 +30,9 @@ class F1Event:
         self.start: datetime.datetime = event[EventKeys.start]
         self.end: datetime.datetime = event[EventKeys.end]
 
+        self.start.replace(tzinfo=datetime.timezone.utc)
+        self.end.replace(tzinfo=datetime.timezone.utc)
+
         self.event_name, self.session_name = self.summary.split(" - ")
         self.emoji = self.event_name.split(" ")[0]
         self.event_name = self.event_name.split("FORMULA 1 ")[1]
