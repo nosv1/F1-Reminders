@@ -8,6 +8,7 @@ import F1_Calendar.F1Events as F1Events
 from F1_Calendar.F1Events import F1Event
 
 import F1_Calendar.F1Subscribers as F1Subscribers
+import pytz
 
 
 class F1CalendarCog(commands.Cog):
@@ -45,7 +46,9 @@ class F1CalendarCog(commands.Cog):
         if not isinstance(self._next_f1_event, F1Event):
             return
 
-        if self._next_f1_event.start - datetime.utcnow() > timedelta(minutes=30):
+        if self._next_f1_event.start - datetime.utcnow().replace(
+            tzinfo=pytz.utc
+        ) > timedelta(minutes=30):
             return
 
         print(f"Sending reminders about {self._next_f1_event.summary}...")

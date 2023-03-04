@@ -20,9 +20,8 @@ def parse_calendar(ics_file: str) -> list[dict[str, str or datetime.datetime]]:
             event["description"] = component.get("description")
             event["start"] = component.get("dtstart").dt
             event["end"] = component.get("dtend").dt
-            # localize to US/Central, then convert to UTC
-            event["start"] += datetime.timedelta(hours=6)
-            event["end"] += datetime.timedelta(hours=6)
+            event["start"] = event["start"].replace(tzinfo=datetime.timezone.utc)
+            event["end"] = event["end"].replace(tzinfo=datetime.timezone.utc)
             events.append(event)
     return events
 
