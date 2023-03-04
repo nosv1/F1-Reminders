@@ -13,6 +13,19 @@ class EventKeys:
     end: str = "end"
 
 
+@dataclass
+class SessionNames:
+    practice_1: str = "Practice 1"
+    practice_2: str = "Practice 2"
+    practice_3: str = "Practice 3"
+    qualifying: str = "Qualifying"
+    sprint_race: str = "Sprint Race"
+    race: str = "Race"
+
+    # def __iter__(self):
+    #     return iter(self.__dict__.values())
+
+
 class F1Event:
     # {
     #     "_id": {"$oid": "6402bc89d8d6bc2739001359"},

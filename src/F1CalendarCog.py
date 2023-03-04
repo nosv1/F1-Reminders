@@ -47,10 +47,8 @@ class F1CalendarCog(commands.Cog):
         if not isinstance(self._next_f1_event, F1Event):
             return
 
-        if (
-            self._next_f1_event.start - datetime.utcnow().replace(tzinfo=pytz.utc)
-            > self.reminder_delta
-        ):
+        utcnow = datetime.utcnow().replace(tzinfo=pytz.utc)
+        if (self._next_f1_event.start - utcnow) > self.reminder_delta:
             return
 
         print(f"Sending reminders about {self._next_f1_event.summary}...")
@@ -62,6 +60,8 @@ class F1CalendarCog(commands.Cog):
         database.close_connection()
 
         for subscriber in event_subscribers:
+            if not subscriber.ping_for_session(self._next_f1_event.session_name):
+                continue
             try:
                 await self._next_f1_event.send_reminder(
                     subscriber.channel(self.bot), subscriber.roles(self.bot)
