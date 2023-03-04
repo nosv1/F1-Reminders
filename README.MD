@@ -1,0 +1,2 @@
+# **F1 Reminder Bot** ##
+This is a Python Discord bot that sends reminders about upcoming F1 event sessions. The bot sends reminders 30 minutes before the start of each session to the channel where the reminder was requested pinging roles that are associated with the channel subscription.
