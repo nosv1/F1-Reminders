@@ -18,6 +18,7 @@ class F1CalendarCog(commands.Cog):
         self.check_events.start()
 
         self._next_f1_event: F1Event = None
+        self.reminder_delta = timedelta(minutes=30)
 
     @property
     async def next_f1_event(self) -> F1Event:
@@ -46,9 +47,10 @@ class F1CalendarCog(commands.Cog):
         if not isinstance(self._next_f1_event, F1Event):
             return
 
-        if self._next_f1_event.start - datetime.utcnow().replace(
-            tzinfo=pytz.utc
-        ) > timedelta(minutes=30):
+        if (
+            self._next_f1_event.start - datetime.utcnow().replace(tzinfo=pytz.utc)
+            > self.reminder_delta
+        ):
             return
 
         print(f"Sending reminders about {self._next_f1_event.summary}...")
@@ -76,8 +78,11 @@ class F1CalendarCog(commands.Cog):
             "F1_2023_events"
         )
         future_events: list[F1Event] = F1Events.get_sorted_future_events(
-            F1_2023_events_collection
+            F1_2023_events_collection, self.reminder_delta
         )
+        # we have to send a delta in so we don't double ping, otherwise it's
+        # possible a ping is sent, then a couple minutes later it gets the same
+        # event, and sends another ping
         database.close_connection()
 
         if not future_events:

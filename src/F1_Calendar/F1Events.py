@@ -67,7 +67,10 @@ class F1Event:
         await channel.send(embed=self.event_embed, content=role_mentions_str)
 
 
-def get_sorted_future_events(collection: collection.Collection) -> list[F1Event]:
+def get_sorted_future_events(
+    collection: collection.Collection,
+    timedelta: datetime.timedelta = datetime.timedelta(minutes=0),
+) -> list[F1Event]:
     """
     Get a list of future F1_Event objects sorted by start time
 
@@ -84,7 +87,7 @@ def get_sorted_future_events(collection: collection.Collection) -> list[F1Event]
     events: list[F1Event] = []
 
     documents = collection.find(
-        {EventKeys.start: {"$gt": datetime.datetime.now()}}
+        {EventKeys.start: {"$gt": datetime.datetime.now() + timedelta}}
     ).sort(EventKeys.start)
 
     for event in documents:
