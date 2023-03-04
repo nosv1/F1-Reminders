@@ -87,7 +87,7 @@ def get_sorted_future_events(
     events: list[F1Event] = []
 
     documents = collection.find(
-        {EventKeys.start: {"$gt": datetime.datetime.now() + timedelta}}
+        {EventKeys.start: {"$gt": datetime.datetime.utcnow() + timedelta}}
     ).sort(EventKeys.start)
 
     for event in documents:
