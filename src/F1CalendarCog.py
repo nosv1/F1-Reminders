@@ -13,8 +13,8 @@ import F1_Calendar.F1Subscribers as F1Subscribers
 class F1CalendarCog(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
-        self.check_events.start()
         self.set_next_f1_event.start()
+        self.check_events.start()
 
         self._next_f1_event: F1Event = None
 
@@ -45,7 +45,7 @@ class F1CalendarCog(commands.Cog):
         if not isinstance(self._next_f1_event, F1Event):
             return
 
-        if self._next_f1_event.start - datetime.now() > timedelta(minutes=30):
+        if self._next_f1_event.start - datetime.utcnow() > timedelta(minutes=30):
             return
 
         print(f"Sending reminders about {self._next_f1_event.summary}...")

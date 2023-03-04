@@ -2,6 +2,7 @@ import icalendar
 import datetime
 import pymongo
 import os
+import pytz
 
 from dotenv import load_dotenv
 
@@ -19,6 +20,9 @@ def parse_calendar(ics_file: str) -> list[dict[str, str or datetime.datetime]]:
             event["description"] = component.get("description")
             event["start"] = component.get("dtstart").dt
             event["end"] = component.get("dtend").dt
+            # localize to US/Central, then convert to UTC
+            event["start"] += datetime.timedelta(hours=6)
+            event["end"] += datetime.timedelta(hours=6)
             events.append(event)
     return events
 
@@ -35,4 +39,9 @@ if __name__ == "__main__":
     events = parse_calendar(calendar_path)
 
     for event in events:
-        db.F1_2023_events.insert_one(event)  # set the collection
+        # update if event already exists
+        if db.F1_2023_events.find_one({"summary": event["summary"]}):
+            db.F1_2023_events.update_one({"summary": event["summary"]}, {"$set": event})
+        # insert if event doesn't exist
+        else:
+            db.F1_2023_events.insert_one(event)
