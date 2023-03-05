@@ -48,19 +48,19 @@ class F1Subscriber:
         self._channel: discord.TextChannel = None
         self._roles: list[discord.Role] = None
 
-    def channel(self, bot: commands.Bot) -> discord.TextChannel:
+    async def channel(self, bot: commands.Bot) -> discord.TextChannel:
         if self._channel is None:
-            self._channel = bot.get_channel(self.channel_id)
+            self._channel = await bot.fetch_channel(self.channel_id)
 
         return self._channel
 
-    def guild(self, bot: commands.Bot) -> discord.Guild:
-        return self.channel(bot).guild
+    async def guild(self, bot: commands.Bot) -> discord.Guild:
+        return (await self.channel(bot)).guild
 
-    def roles(self, bot: commands.Bot) -> list[discord.Role]:
+    async def roles(self, bot: commands.Bot) -> list[discord.Role]:
         if self._roles is None:
             self._roles = [
-                self.guild(bot).get_role(role_id) for role_id in self.roles_ids
+                (await self.guild(bot)).get_role(role_id) for role_id in self.roles_ids
             ]
 
         return self._roles
@@ -94,11 +94,8 @@ def get_event_subscribers(collection: collection.Collection) -> list[F1Subscribe
 
     documents = collection.find()
     for document in documents:
-        subscribers.append(
-            F1Subscriber(
-                document[SubscriberKeys.channel_id], document[SubscriberKeys.roles_ids]
-            )
-        )
+        document: dict[str, str or int or list[int]]
+        subscribers.append(F1Subscriber(document))
 
     print(f"Found {len(subscribers)} event subscribers in {collection.database.name}")
     return subscribers

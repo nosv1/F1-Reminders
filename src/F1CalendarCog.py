@@ -1,7 +1,6 @@
 from Database import MongoDatabase
 from datetime import datetime, timedelta
 
-import discord
 from discord.ext import commands, tasks
 
 import F1_Calendar.F1Events as F1Events
@@ -18,7 +17,7 @@ class F1CalendarCog(commands.Cog):
         self.check_events.start()
 
         self._next_f1_event: F1Event = None
-        self.reminder_delta = timedelta(minutes=30)
+        self.reminder_delta = timedelta(minutes=15)
 
     @property
     async def next_f1_event(self) -> F1Event:
@@ -64,7 +63,7 @@ class F1CalendarCog(commands.Cog):
                 continue
             try:
                 await self._next_f1_event.send_reminder(
-                    subscriber.channel(self.bot), subscriber.roles(self.bot)
+                    await subscriber.channel(self.bot), await subscriber.roles(self.bot)
                 )
             except Exception as e:
                 print(f"Failed to send reminder to {subscriber.channel_id}: {e}")
