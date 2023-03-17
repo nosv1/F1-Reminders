@@ -92,6 +92,9 @@ def get_sorted_future_events(
     collection : pymongo.collection.Collection
         The collection to get the events from
 
+    timedelta : datetime.timedelta, optional
+        The timedelta to add to the current time to get the start time of the events, by default datetime.timedelta(minutes=0)
+
     Returns
     -------
     list[F1_Event]
